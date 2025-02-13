@@ -8,8 +8,8 @@ SmartSpend est une application web de gestion financière qui aide les utilisate
 
 ## ✨ Fonctionnalités
 
-- ✅ Authentification sécurisée : Inscription et connexion des utilisateurs avec une gestion sécurisée des accès.
-- ✅ Gestion des transactions : Ajout, modification et suppression des transactions financières.
+✅  Authentification sécurisée : Inscription et connexion des utilisateurs avec une gestion sécurisée des accès.
+✅  Gestion des transactions : Ajout, modification et suppression des transactions financières.
 - ✅ Suivi des objectifs financiers : Définition d’un montant limite pour mieux gérer son budget.
 - ✅ Alertes et notifications : Avertissements en cas de dépassement du budget défini.
 - ✅ Visualisation des dépenses : Graphiques interactifs pour analyser l’évolution des finances personnelles.
