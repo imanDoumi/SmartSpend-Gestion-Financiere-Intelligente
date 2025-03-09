@@ -4,7 +4,7 @@
 
 Ce projet représente une étape clé dans la création d'une architecture de microservices, mettant en œuvre une infrastructure conteneurisée et interconnectée grâce à Docker Compose. L'objectif est d'améliorer l'interopérabilité entre les services et d'assurer une gestion efficace des données partagées.
 
-**Binômes** : EL KARCI KHALIL et IMAN DOUMI
+**Binômes** : EL KARCI KHALIL et DOUMI IMAN
 
 ---
 
