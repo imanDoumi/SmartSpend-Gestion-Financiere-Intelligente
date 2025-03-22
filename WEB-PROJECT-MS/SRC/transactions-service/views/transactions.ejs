@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSpend - Espace Personnel</title>
+    <link rel="stylesheet" href="transaction.css">
+    <style>
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .transactions-table th, .transactions-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .transactions-table th {
+            background-color: #f2f2f2;
+        }
+
+        .transactions-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .transactions-table tbody tr:hover {
+            background-color: #ddd;
+        }
+
+        .transactions-table button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .transactions-table button:hover {
+            background-color: #0056b3;
+        }
+
+        .modification-form {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .modification-form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .modification-form input[type="number"],
+        .modification-form input[type="date"],
+        .modification-form input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .modification-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modification-form button:hover {
+            background-color: #45a049;
+        }
+
+        .modification-form.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Espace Personnel - SmartSpend</h1>
+        <nav>
+            <ul>
+                <li><a href="http://localhost:9080/">Accueil</a></li>
+                <li><a href="http://localhost:9083/espace-perso">Espace Personnel</a></li>
+                <li><a href="/objectifs-financiers">Objectifs Financiers</a></li>
+                <li><a href="http://localhost:9084/alertes">Alertes</a></li>
+                <li><a href="http://localhost:9085/logout">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Mes Transactions</h2>
+        <% if (transactions.length > 0) { %>
+            <% transactions.forEach(transaction => { %>
+                <div class="transaction">
+                    <table class="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><%= transaction.Date %></td> <!-- Assurez-vous que la colonne s'appelle "Date" -->
+                                <td><%= transaction.Montant %></td> <!-- Assurez-vous que la colonne s'appelle "Montant" -->
+                                <td><%= transaction.Description %></td> <!-- Assurez-vous que la colonne s'appelle "Description" -->
+                                <td>
+                                    <button class="modifier-btn" data-id="<%= transaction.TransactionID %>">Modifier</button>
+                                    <form action="/transactions/delete" method="POST">
+                                        <input type="hidden" name="transaction_id" value="<%= transaction.TransactionID %>">
+                                        <button type="submit">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr class="modification-form" id="form-<%= transaction.TransactionID %>">
+                                <td colspan="4">
+                                    <form action="/transactions/update" method="POST">
+                                        <input type="hidden" name="transaction_id" value="<%= transaction.TransactionID %>">
+                                        <label>Nouveau Montant :</label>
+                                        <input type="number" name="nouveau_montant" required>
+                                        <label>Nouvelle Date :</label>
+                                        <input type="date" name="nouvelle_date" required>
+                                        <label>Nouvelle Description :</label>
+                                        <input type="text" name="nouvelle_description" required>
+                                        <button type="submit">Modifier</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>Aucune transaction disponible.</p>
+        <% } %>
+    </main>
+
+    <script>
+        document.querySelectorAll('.modifier-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                document.getElementById('form-' + id).classList.toggle('show');
+            });
+        });
+    </script>
+</body>
+</html>
