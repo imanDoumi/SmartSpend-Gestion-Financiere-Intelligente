@@ -15,9 +15,8 @@ Ce projet représente une étape clé dans la création d'une architecture de mi
 - Chaque microservice est conteneurisé avec une architecture claire et optimisée.  
 - Utilisation de **Docker Compose** pour simplifier le déploiement et l'orchestration des services.
 
-✅ **Volume partagé pour les sessions utilisateurs** :  
-- Mise en place d’un système de gestion centralisée des variables de session via un volume partagé Docker.  
-- Cette solution garantit une **cohérence optimale** entre les microservices, en particulier pour le suivi des connexions utilisateurs.
+✅ **Redis pour les sessions utilisateurs** :  
+- Utilisé pour stocker les variables de session des utilisateurs, accessible par plusieurs conteneurs.
 
 ---
 
