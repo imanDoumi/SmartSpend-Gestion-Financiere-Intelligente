@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSpend - Espace Personnel</title>
+    <link rel="stylesheet" href="espace_personnel.css">
+</head>
+<body>
+    <header>
+        <h1>Espace Personnel - SmartSpend</h1>
+        <nav>
+            <ul>
+                <li><a href="http://localhost:9080/">Accueil</a></li>
+                <li><a href="http://localhost:9086/transactions">Transactions</a></li>
+                <li><a href="http://localhost:9087/objectifs-financiers">Objectifs Financiers</a></li>
+                <li><a href="http://localhost:9084/alertes">Alertes</a></li>
+                <li><a href="http://localhost:9085/logout">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- Section pour ajouter une nouvelle transaction -->
+        <section id="ajouter-transaction">
+            <h2>Ajouter une Nouvelle Transaction</h2>
+            <form action="/espace-perso-back" method="POST">
+                <label for="categorie">Catégorie :</label>
+                <select name="categorie" id="categorie">
+                    <option value="1">Nourriture</option>
+                    <option value="2">Logement</option>
+                    <option value="3">Transport</option>
+                    <option value="4">Loisirs</option>
+                    <option value="5">Santé</option>
+                    <option value="6">Éducation</option>
+                    <option value="7">Factures (électricité, eau, téléphone, etc.)</option>
+                    <option value="8">Vêtements</option>
+                    <option value="9">Épargne</option>
+                    <option value="10">Divertissement</option>
+                    <option value="11">Voyage</option>
+                    <option value="12">Assurance</option>
+                    <option value="13">Impôts</option>
+                    <option value="14">Remboursements de dettes</option>
+                    <option value="15">Autres</option>
+                </select><br>
+                <label for="montant">Montant :</label>
+                <input type="number" name="montant" id="montant" step="0.01" min="0" required><br>
+                <label for="date">Date :</label>
+                <input type="date" name="date" id="date" required><br>
+                <label for="description">Description :</label>
+                <textarea name="description" id="description" rows="3"></textarea><br>
+                <button type="submit" name="ajouter">Ajouter Transaction</button>
+            </form>
+            <% if (typeof message !== 'undefined' && message) { %>
+                <%- message %>
+            <% } %>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 SmartSpend. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>
