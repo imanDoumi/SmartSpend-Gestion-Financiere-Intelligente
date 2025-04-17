@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSpend - Alertes</title>
+    <link rel="stylesheet" href="alertes.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Alertes</h1>
+        <nav>
+            <ul>
+                <li><a href="http://localhost:9080/">Accueil</a></li>
+                <li><a href="http://localhost:9083/espace-perso">Espace Personnel</a></li>
+                <li><a href="http://localhost:9080/">Objectifs Financiers</a></li>
+                <li><a href="http://localhost:9084/alertes">Alertes</a></li>
+                <li><a href="http://localhost:9080/">Transactions</a></li>
+                <li><a href="http://localhost:9085/logout">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="alerts" id="alerts"></div>
+        <div>
+            <!-- Premier graphique : Dépenses Mensuelles et Budget Mensuel -->
+            <canvas id="monthlySpendingChart"></canvas>
+            <!-- Deuxième graphique : Résumé Financier du Mois -->
+            <canvas id="budgetChart"></canvas>
+        </div>
+    </main>
+    <footer>
+        <p>© 2025 SmartSpend. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/alertes-data');
+                const data = await response.json();
+
+                if (data) {
+                    renderCharts(data);  // Appel des deux graphiques
+                    displayAlerts(data.alerts);
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement des données :", error);
+            }
+        }
+
+        function displayAlerts(alerts) {
+            const alertsDiv = document.getElementById("alerts");
+            alertsDiv.innerHTML = "";
+            if (alerts && alerts.length > 0) {
+                alerts.forEach(alert => {
+                    const p = document.createElement("p");
+                    p.classList.add("alert");
+                    p.textContent = alert;
+                    alertsDiv.appendChild(p);
+                });
+            }
+        }
+
+        function renderCharts(data) {
+    const { monthlySpendingData, monthlyBudgetData, budgetData, spendingData, economieReelle } = data;
+
+    const labels = [...Array(12).keys()].map(i => {
+        let date = new Date();
+        date.setMonth(date.getMonth() - i);
+        return date.toLocaleString('fr', { month: 'short', year: 'numeric' }).toUpperCase();
+    });
+
+    const ctx1 = document.getElementById('monthlySpendingChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Dépenses Mensuelles (DH)',
+                    data: monthlySpendingData || Array(12).fill(0),
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true
+                },
+                {
+                    label: 'Budget Mensuel (DH)',
+                    data: monthlyBudgetData || Array(12).fill(0),
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: false
+                },
+                {
+                    label: 'Économies Mensuelles (DH)',
+                    data: monthlyBudgetData.map((b, i) => (b || 0) - (monthlySpendingData[i] || 0)),
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: false
+                }
+            ]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    const ctx2 = document.getElementById('budgetChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['Budget Total', 'Dépenses', 'Économies'],
+            datasets: [{
+                label: 'Résumé Financier Du Mois',
+                data: [
+                    budgetData?.BudgetMensuel || 0, 
+                    spendingData?.TotalSpent || 0, 
+                    economieReelle || 0
+                ],
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+
+        window.onload = fetchData;
+    </script>
+</body>
+</html>

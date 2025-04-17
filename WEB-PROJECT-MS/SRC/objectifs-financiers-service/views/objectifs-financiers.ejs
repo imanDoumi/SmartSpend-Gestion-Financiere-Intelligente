@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSpend - Objectifs Financiers</title>
+    <link rel="stylesheet" href="objectifs_financiers.css">
+</head>
+<body>
+    <header>
+        <h1>Objectifs Financiers</h1>
+        <nav>
+            <ul>
+                <li><a href="http://localhost:9080/">Accueil</a></li>
+                <li><a href="http://localhost:9083/espace-perso">Espace Personnel</a></li>
+                <li><a href="http://localhost:9087/objectifs-financiers">Objectifs Financiers</a></li>
+                <li><a href="http://localhost:9084/alertes">Alertes</a></li>
+                <li><a href="http://localhost:9086/transactions">Transactions</a></li>
+                <li><a href="http://localhost:9085/logout">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <form action="/set-budget" method="POST">
+            <label for="mois_annee">Mois et année :</label>
+            <input type="month" id="mois_annee" name="mois_annee" required 
+                   value="<%= currentMonthYear %>">
+
+            <label for="budget_mensuel">Budget mensuel :</label>
+            <input type="number" id="budget_mensuel" name="budget_mensuel" step="0.01" required 
+                   value="<%= current_settings && current_settings.BudgetMensuel || '' %>">
+
+            <label for="montant_a_economiser">Montant à économiser :</label>
+            <input type="number" id="montant_a_economiser" name="montant_a_economiser" step="0.01" required 
+                   value="<%= current_settings && current_settings.MontantAEconomiser || '' %>">
+
+            <button type="submit" name="set_budget">Définir le budget et le montant à économiser</button>
+        </form>
+        <% if (message) { %>
+            <div class="<%= message.includes('Erreur') ? 'erreur' : 'succes' %>">
+                <%= message %>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>
