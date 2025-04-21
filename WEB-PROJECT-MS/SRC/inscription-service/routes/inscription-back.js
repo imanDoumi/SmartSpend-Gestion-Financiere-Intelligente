@@ -1,6 +1,7 @@
 const express = require('express');
-router = express.Router();
+const router = express.Router();
 const mysql = require('mysql2');
+
 // Configuration de la base de données
 const dbConfig = {
     host: 'db',
@@ -8,10 +9,10 @@ const dbConfig = {
     password: 'root',
     database: 'smartspenddb'
 };
+
 let db;
 function connectWithRetry() {
     db = mysql.createConnection(dbConfig);
-
     db.connect((err) => {
         if (err) {
             console.error('Erreur de connexion, nouvelle tentative dans 5 secondes:', err.message);
@@ -23,9 +24,9 @@ function connectWithRetry() {
 }
 
 connectWithRetry();
+
 // Traitement de l'inscription
 router.post('/inscription-back', (req, res) => {
-    console.log(req.body);
     const { nom, prenom, email, mdp, rmdp } = req.body;
     let message = "";
 
@@ -37,22 +38,40 @@ router.post('/inscription-back', (req, res) => {
     if (mdp !== rmdp) message += "<div class='err'>Mots de passe non identiques!</div>";
 
     if (message === "") {
-        const dateInscription = new Date().toISOString().split('T')[0];
-        const fullName = `${nom} ${prenom}`;
-        const motDePasse = require('crypto').createHash('md5').update(mdp).digest('hex');
-
-        const sql = "INSERT INTO utilisateurs (Nom, Email, MotDePasse, DateInscription) VALUES (?, ?, ?, ?)";
-        db.query(sql, [fullName, email, motDePasse, dateInscription], (err, result) => {
+        // Vérifier si l'e-mail existe déjà
+        const checkEmailSql = "SELECT * FROM utilisateurs WHERE Email = ?";
+        db.query(checkEmailSql, [email], (err, rows) => {
             if (err) {
-                console.error('Erreur lors de l\'insertion:', err);
+                console.error("Erreur lors de la vérification de l'email:", err);
                 message = "<div class='err'>Erreur lors du process d'inscription</div>";
-            } else {
-                message = "<div class='ok'>Félicitations, vous êtes maintenant inscrit sur notre site! Vous pouvez vous connecter avec vos identifiants.</div>";
+                return res.render('inscription', { message });
             }
-            res.render('inscription', { message });
+
+            if (rows.length > 0) {
+                // Email déjà existant
+                message = "<div class='err'>Un compte est déjà associé à cette adresse e-mail.</div>";
+                return res.render('inscription', { message });
+            }
+
+            // Insérer l'utilisateur car l'email est unique
+            const dateInscription = new Date().toISOString().split('T')[0];
+            const fullName = `${nom} ${prenom}`;
+            const motDePasse = require('crypto').createHash('md5').update(mdp).digest('hex');
+
+            const insertSql = "INSERT INTO utilisateurs (Nom, Email, MotDePasse, DateInscription) VALUES (?, ?, ?, ?)";
+            db.query(insertSql, [fullName, email, motDePasse, dateInscription], (err, result) => {
+                if (err) {
+                    console.error('Erreur lors de l\'insertion:', err);
+                    message = "<div class='err'>Erreur lors du process d'inscription</div>";
+                } else {
+                    message = "<div class='ok'>Félicitations, vous êtes maintenant inscrit sur notre site! Vous pouvez vous connecter avec vos identifiants.</div>";
+                }
+                res.render('inscription', { message });
+            });
         });
     } else {
         res.render('inscription', { message });
     }
 });
-module.exports=router;
+
+module.exports = router;
